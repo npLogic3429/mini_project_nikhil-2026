@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canteen Demand Desk — GL Bajaj CSIT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#E9EDE9;
+    --paper:#FFFFFF;
+    --ink:#1B2420;
+    --ink-soft:#4B564F;
+    --primary:#1F4B3F;
+    --primary-light:#2F6B57;
+    --accent:#E8A33D;
+    --accent-red:#C1443B;
+    --line:#CBD2C9;
+    --line-soft:#DDE2DA;
+    --radius:14px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--bg);
+    background-image:radial-gradient(circle at 1px 1px, rgba(27,36,32,0.06) 1px, transparent 0);
+    background-size:22px 22px;
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    min-height:100vh;
+    padding:28px 16px 60px;
+  }
+  .wrap{max-width:1080px; margin:0 auto;}
+
+  /* ---------- Header ---------- */
+  header{
+    background:var(--primary);
+    color:#F3F0E6;
+    border-radius:var(--radius);
+    padding:22px 26px;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    flex-wrap:wrap;
+    gap:14px;
+    box-shadow:0 6px 0 rgba(0,0,0,0.08);
+  }
+  .brand-eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px; letter-spacing:2px; text-transform:uppercase;
+    color:var(--accent); margin-bottom:6px;
+  }
+  header h1{font-family:'Space Grotesk', sans-serif; font-size:26px; font-weight:700;}
+  header .sub{font-size:13px; color:#CBD8CF; margin-top:4px;}
+  .clock{font-family:'IBM Plex Mono', monospace; text-align:right; font-size:13px; color:#CBD8CF;}
+  .clock span{display:block; color:#fff; font-size:16px; font-weight:600;}
+
+  /* ---------- Layout ---------- */
+  .grid{display:grid; grid-template-columns:360px 1fr; gap:20px; margin-top:20px;}
+  @media(max-width:760px){ .grid{grid-template-columns:1fr;} }
+  .card{background:var(--paper); border-radius:var(--radius); border:1px solid var(--line-soft);}
+
+  /* ---------- Form ---------- */
+  .chit{padding:22px;}
+  .label-row{display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;}
+  .chit h2{font-family:'Space Grotesk', sans-serif; font-size:16px; font-weight:700;}
+  .tag-no{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--ink-soft);
+    border:1px dashed var(--line); padding:2px 8px; border-radius:20px;
+  }
+  .field{margin-bottom:18px;}
+  .field label{
+    display:block; font-size:12px; font-weight:600; text-transform:uppercase;
+    letter-spacing:0.6px; color:var(--ink-soft); margin-bottom:8px;
+  }
+
+  /* pill button groups — the "click" part */
+  .pill-group{display:flex; flex-wrap:wrap; gap:8px;}
+  .pill{
+    padding:9px 14px;
+    border-radius:9px;
+    border:1.5px solid var(--line);
+    background:#FCFCFA;
+    font-family:'Inter', sans-serif;
+    font-size:13px;
+    font-weight:500;
+    color:var(--ink-soft);
+    cursor:pointer;
+    transition:all .15s ease;
+    user-select:none;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .pill:hover{border-color:var(--primary-light); color:var(--ink); transform:translateY(-1px);}
+  .pill.active{
+    background:var(--primary);
+    border-color:var(--primary);
+    color:#fff;
+    box-shadow:0 3px 0 rgba(31,75,63,0.25);
+  }
+  .pill .ic{font-size:15px;}
+  .pill-group.wide .pill{flex:1; justify-content:center;}
+
+  .predict-btn{
+    width:100%; margin-top:6px; padding:14px;
+    border:none; border-radius:9px;
+    background:var(--accent);
+    color:var(--ink);
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700; font-size:14.5px; letter-spacing:0.3px;
+    cursor:pointer;
+    transition:transform .1s ease, box-shadow .15s ease;
+    box-shadow:0 4px 0 #b87c1f;
+  }
+  .predict-btn:hover{filter:brightness(1.04);}
+  .predict-btn:active{transform:translateY(3px); box-shadow:0 1px 0 #b87c1f;}
+  .predict-btn:focus-visible{outline:2px solid var(--primary); outline-offset:2px;}
+
+  .shuffle-btn{
+    width:100%; margin-top:10px; padding:10px;
+    border:1.5px dashed var(--line); border-radius:9px;
+    background:transparent; color:var(--ink-soft);
+    font-family:'Inter', sans-serif; font-size:12.5px; font-weight:600;
+    cursor:pointer; transition:all .15s ease;
+  }
+  .shuffle-btn:hover{border-color:var(--primary); color:var(--primary); background:rgba(31,75,63,0.04);}
+
+  .note{
+    margin-top:16px; font-size:11.5px; color:var(--ink-soft); line-height:1.5;
+    border-top:1px dashed var(--line); padding-top:12px;
+  }
+
+  /* ---------- Ticket / results ---------- */
+  .ticket-wrap{padding:0;}
+  .ticket{padding:26px 26px 10px; font-family:'IBM Plex Mono', monospace;}
+  .ticket-head{text-align:center; border-bottom:1px dashed var(--line); padding-bottom:14px; margin-bottom:14px;}
+  .ticket-head .t-name{font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:15px; letter-spacing:0.5px;}
+  .ticket-head .t-sub{font-size:11px; color:var(--ink-soft); margin-top:4px;}
+  .ticket-meta{display:flex; justify-content:space-between; font-size:11px; color:var(--ink-soft); margin-bottom:6px;}
+  .ticket-hint{font-size:10.5px; color:var(--ink-soft); text-align:center; margin-bottom:10px; opacity:0.75;}
+
+  /* clickable item row */
+  .item-row{
+    border-bottom:1px dotted var(--line-soft);
+    padding:10px 6px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:background .15s ease;
+  }
+  .item-row:hover{background:#F4F6F3;}
+  .item-row.done .row-top .name{text-decoration:line-through; color:var(--ink-soft);}
+  .item-row.done{opacity:0.55;}
+
+  .row-top{
+    display:grid;
+    grid-template-columns:22px 1fr auto 90px;
+    align-items:center;
+    gap:10px;
+    font-size:13px;
+  }
+  .checkbox{
+    width:17px; height:17px; border-radius:5px;
+    border:1.5px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+    font-size:11px; color:#fff;
+    flex-shrink:0;
+  }
+  .item-row.done .checkbox{background:var(--primary); border-color:var(--primary);}
+  .row-top .name{color:var(--ink); font-weight:500; font-family:'Inter',sans-serif;}
+  .row-top .qty{font-weight:600; text-align:right; white-space:nowrap;}
+  .row-top .badge{
+    font-size:9.5px; padding:2px 6px; border-radius:20px;
+    background:var(--accent-red); color:#fff; justify-self:end; letter-spacing:0.3px;
+  }
+  .bar-track{
+    grid-column:1 / -1; height:6px; background:var(--line-soft);
+    border-radius:6px; overflow:hidden; margin-top:6px; margin-left:32px;
+  }
+  .bar-fill{height:100%; background:var(--accent); border-radius:6px; transition:width .5s ease;}
+
+  .row-detail{
+    max-height:0; overflow:hidden; transition:max-height .25s ease;
+    margin-left:32px; font-family:'Inter', sans-serif;
+  }
+  .item-row.expanded .row-detail{max-height:60px;}
+  .row-detail-inner{
+    display:flex; gap:18px; padding:10px 0 2px; font-size:11.5px; color:var(--ink-soft);
+  }
+  .row-detail-inner b{color:var(--ink); font-family:'IBM Plex Mono', monospace;}
+
+  .totals{
+    display:flex; justify-content:space-between; padding:16px 4px 8px;
+    margin-top:8px; border-top:1px dashed var(--line);
+    font-family:'Space Grotesk', sans-serif;
+  }
+  .totals .big{font-size:20px; font-weight:700; color:var(--primary);}
+  .totals .lbl{font-size:11px; color:var(--ink-soft); font-family:'IBM Plex Mono', monospace; letter-spacing:0.5px;}
+
+  .ticket-actions{
+    display:flex; gap:8px; padding:14px 26px 0;
+  }
+  .mini-btn{
+    flex:1; padding:9px; border-radius:8px; border:1.5px solid var(--line);
+    background:#FCFCFA; font-family:'Inter',sans-serif; font-size:12px; font-weight:600;
+    color:var(--ink-soft); cursor:pointer; transition:all .15s ease;
+  }
+  .mini-btn:hover{border-color:var(--primary); color:var(--primary);}
+
+  .perforation{
+    height:16px;
+    background:radial-gradient(circle at 10px 0, var(--bg) 8px, transparent 9px) repeat-x;
+    background-size:20px 16px;
+    margin-top:14px;
+  }
+
+  .empty-state{padding:60px 26px; text-align:center; color:var(--ink-soft); font-size:13.5px;}
+  .empty-state .icon{font-size:30px; margin-bottom:10px; opacity:0.5;}
+
+  /* ---------- Bottom analytics ---------- */
+  .analytics{margin-top:20px; padding:22px;}
+  .analytics h2{font-family:'Space Grotesk', sans-serif; font-size:15px; font-weight:700; margin-bottom:16px;}
+  .chart-row{display:flex; align-items:center; gap:12px; margin-bottom:12px; cursor:pointer;}
+  .chart-row .cname{width:110px; font-size:12.5px; flex-shrink:0;}
+  .chart-row .ctrack{flex:1; height:16px; background:var(--line-soft); border-radius:4px; overflow:hidden;}
+  .chart-row .cfill{height:100%; background:linear-gradient(90deg, var(--primary), var(--primary-light)); transition:width .5s ease;}
+  .chart-row .cval{width:36px; text-align:right; font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--ink-soft); flex-shrink:0;}
+  .chart-row:hover .cname{color:var(--primary); font-weight:600;}
+
+  /* ---------- Data source card ---------- */
+  .data-card{padding:20px 22px;}
+  .data-card h2{font-family:'Space Grotesk', sans-serif; font-size:14.5px; font-weight:700; margin-bottom:4px;}
+  .data-card .sub{font-size:11.5px; color:var(--ink-soft); margin-bottom:14px;}
+  .source-row{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;}
+  .source-status{
+    display:flex; align-items:center; gap:8px; font-family:'IBM Plex Mono', monospace; font-size:11.5px;
+  }
+  .dot{width:8px; height:8px; border-radius:50%; background:var(--primary-light); flex-shrink:0;}
+  .dot.custom{background:var(--accent);}
+  .data-actions{display:flex; gap:8px; flex-wrap:wrap;}
+  .file-btn{
+    padding:8px 13px; border-radius:8px; border:1.5px solid var(--line);
+    background:#FCFCFA; font-family:'Inter',sans-serif; font-size:12px; font-weight:600;
+    color:var(--ink-soft); cursor:pointer; transition:all .15s ease;
+  }
+  .file-btn:hover{border-color:var(--primary); color:var(--primary);}
+  .file-btn.ghost{border-style:dashed;}
+  #csvInput{display:none;}
+  .data-msg{
+    margin-top:10px; font-size:11.5px; padding:8px 10px; border-radius:8px;
+    display:none;
+  }
+  .data-msg.show{display:block;}
+  .data-msg.ok{background:#EAF3EC; color:var(--primary); border:1px solid #CFE3D4;}
+  .data-msg.err{background:#FBEAE8; color:var(--accent-red); border:1px solid #F1CFCB;}
+
+  /* ---------- Trend chart ---------- */
+  .trend{margin-top:20px; padding:22px;}
+  .trend h2{font-family:'Space Grotesk', sans-serif; font-size:15px; font-weight:700; margin-bottom:4px;}
+  .trend .sub{font-size:11.5px; color:var(--ink-soft); margin-bottom:14px;}
+  .trend-legend{display:flex; gap:14px; flex-wrap:wrap; margin-bottom:10px;}
+  .trend-legend span{
+    display:flex; align-items:center; gap:6px; font-size:11px; color:var(--ink-soft);
+    font-family:'IBM Plex Mono', monospace;
+  }
+  .trend-legend i{width:10px; height:10px; border-radius:3px; display:inline-block;}
+  .trend svg{width:100%; height:auto; display:block;}
+  .trend-pt{cursor:pointer;}
+  .trend-pt:hover{r:5;}
+
+  footer{text-align:center; margin-top:26px; font-size:11.5px; color:var(--ink-soft);}
+  footer code{background:rgba(255,255,255,0.6); border:1px solid var(--line-soft); padding:1px 6px; border-radius:4px; font-family:'IBM Plex Mono', monospace;}
+
+  @keyframes pop{0%{transform:scale(0.97); opacity:0;} 100%{transform:scale(1); opacity:1;}}
+  .ticket{animation:pop .25s ease;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <div class="brand-eyebrow">CSIT · GL Bajaj Institute</div>
+      <h1>Canteen Demand Desk</h1>
+      <div class="sub">Prototype — click your scenario, get an instant prep ticket</div>
+    </div>
+    <div class="clock">TODAY<span id="todayDate">—</span></div>
+  </header>
+
+  <!-- DATA SOURCE -->
+  <div class="card data-card">
+    <h2>Training data</h2>
+    <div class="sub">Predictions above run on the default dataset. A canteen owner can swap in their own sales history instead.</div>
+    <div class="source-row">
+      <div class="source-status">
+        <span class="dot" id="sourceDot"></span>
+        <span id="sourceLabel">Default dataset — 8 items, synthetic</span>
+      </div>
+      <div class="data-actions">
+        <button class="file-btn ghost" id="sampleBtn">⬇ Sample CSV</button>
+        <button class="file-btn" id="uploadBtn">⬆ Upload your data</button>
+        <button class="file-btn ghost" id="resetDataBtn" style="display:none;">↺ Use default</button>
+      </div>
+      <input type="file" id="csvInput" accept=".csv">
+    </div>
+    <div class="data-msg" id="dataMsg"></div>
+  </div>
+
+  <div class="grid">
+
+    <!-- FORM -->
+    <div class="card chit">
+      <div class="label-row">
+        <h2>New Prediction</h2>
+        <span class="tag-no" id="chitNo">#0001</span>
+      </div>
+
+      <div class="field">
+        <label>Day of week</label>
+        <div class="pill-group" id="dayGroup">
+          <div class="pill" data-val="Monday">Mon</div>
+          <div class="pill" data-val="Tuesday">Tue</div>
+          <div class="pill" data-val="Wednesday">Wed</div>
+          <div class="pill" data-val="Thursday">Thu</div>
+          <div class="pill active" data-val="Friday">Fri</div>
+          <div class="pill" data-val="Saturday">Sat</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Meal slot</label>
+        <div class="pill-group wide" id="slotGroup">
+          <div class="pill" data-val="breakfast"><span class="ic">🌅</span>Breakfast</div>
+          <div class="pill active" data-val="lunch"><span class="ic">🍛</span>Lunch</div>
+          <div class="pill" data-val="snacks"><span class="ic">☕</span>Snacks</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Weather</label>
+        <div class="pill-group wide" id="weatherGroup">
+          <div class="pill active" data-val="sunny"><span class="ic">☀️</span>Sunny</div>
+          <div class="pill" data-val="rainy"><span class="ic">🌧️</span>Rainy</div>
+          <div class="pill" data-val="cold"><span class="ic">❄️</span>Cold</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Special day</label>
+        <div class="pill-group" id="eventGroup">
+          <div class="pill active" data-val="none">Normal</div>
+          <div class="pill" data-val="exam">Exam week</div>
+          <div class="pill" data-val="fest">Fest</div>
+          <div class="pill" data-val="holiday">Low turnout</div>
+        </div>
+      </div>
+
+      <button class="predict-btn" id="predictBtn">▶ Predict Today's Demand</button>
+      <button class="shuffle-btn" id="shuffleBtn">🎲 Try a random scenario</button>
+
+      <div class="note">
+        Prototype logic simulates the trained <strong>RandomForestRegressor</strong> output. Swap <code>predictDemand()</code> with a fetch() call to your Flask/FastAPI endpoint to serve real predictions.
+      </div>
+    </div>
+
+    <!-- TICKET -->
+    <div class="card ticket-wrap">
+      <div id="ticketArea">
+        <div class="empty-state">
+          <div class="icon">🧾</div>
+          Click your scenario on the left, then hit<br><strong>Predict Today's Demand</strong>.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANALYTICS -->
+  <div class="card analytics" id="analyticsCard" style="display:none;">
+    <h2>Item-wise comparison <span style="font-weight:400; color:var(--ink-soft); font-size:11.5px;">— click a bar to jump to it in the ticket</span></h2>
+    <div id="chartArea"></div>
+  </div>
+
+  <!-- WEEKLY TREND -->
+  <div class="card trend" id="trendCard" style="display:none;">
+    <h2>Weekly trend — top items</h2>
+    <div class="sub">Same slot/weather/event, predicted across all 6 days</div>
+    <div class="trend-legend" id="trendLegend"></div>
+    <div id="trendChart"></div>
+  </div>
+
+  <footer>
+    Built for <strong>College Canteen Demand Predictor</strong> · Mini Project · Model input: day, weather, event, meal slot &nbsp;·&nbsp; <code>v0.3 prototype</code>
+  </footer>
+</div>
+
+<script>
+  document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-IN',{weekday:'short', day:'2-digit', month:'short', year:'numeric'});
+  document.getElementById('chitNo').textContent = '#' + String(Math.floor(1000 + Math.random()*8999));
+
+  const DEFAULT_MENU = [
+    { name: 'Samosa',        base: 85  },
+    { name: 'Tea / Coffee',  base: 130 },
+    { name: 'Maggi',         base: 70  },
+    { name: 'Chole Bhature', base: 60  },
+    { name: 'Veg Thali',     base: 55  },
+    { name: 'Sandwich',      base: 50  },
+    { name: 'Cold Drink',    base: 45  },
+    { name: 'Dosa',          base: 40  },
+  ];
+
+  // ACTIVE_MENU + customFactors switch between the built-in demo data and
+  // whatever the canteen owner uploads via the CSV in the "Training data" card.
+  let ACTIVE_MENU = DEFAULT_MENU;
+  let customFactors = null; // { day:{}, slot:{}, weather:{}, event:{} } or null = use default rules
+
+  // ---------- pill group state ----------
+  function setupPillGroup(id){
+    const group = document.getElementById(id);
+    group.querySelectorAll('.pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        group.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+      });
+    });
+    return () => group.querySelector('.pill.active').dataset.val;
+  }
+  const getDay = setupPillGroup('dayGroup');
+  const getSlot = setupPillGroup('slotGroup');
+  const getWeather = setupPillGroup('weatherGroup');
+  const getEvent = setupPillGroup('eventGroup');
+
+  function seededRandom(seed){ let x = Math.sin(seed) * 10000; return x - Math.floor(x); }
+
+  function predictDemand(day, slot, weather, event){
+    return ACTIVE_MENU.map((item, idx) => {
+      let mult = 1;
+
+      if (customFactors){
+        // owner-uploaded data: factors come from averaging their own sales rows
+        mult *= customFactors.day[day] ?? 1;
+        mult *= customFactors.slot[slot] ?? 1;
+        mult *= customFactors.weather[weather] ?? 1;
+        mult *= customFactors.event[event] ?? 1;
+      } else {
+        // built-in demo rules
+        if (day === 'Saturday') mult *= 0.55;
+        else if (day === 'Monday') mult *= 1.05;
+        else if (day === 'Friday') mult *= 1.1;
+
+        if (slot === 'breakfast') mult *= (item.name === 'Tea / Coffee' || item.name === 'Samosa') ? 1.3 : 0.7;
+        else if (slot === 'snacks') mult *= (item.name === 'Maggi' || item.name === 'Tea / Coffee' || item.name === 'Cold Drink') ? 1.25 : 0.6;
+        else mult *= (item.name === 'Veg Thali' || item.name === 'Chole Bhature') ? 1.3 : 1;
+
+        if (weather === 'rainy') mult *= (item.name === 'Maggi' || item.name === 'Tea / Coffee' || item.name === 'Samosa') ? 1.4 : 0.85;
+        else if (weather === 'cold') mult *= (item.name === 'Tea / Coffee' || item.name === 'Chole Bhature') ? 1.3 : 0.95;
+        else mult *= (item.name === 'Cold Drink') ? 1.3 : 1;
+
+        if (event === 'exam') mult *= (item.name === 'Tea / Coffee') ? 1.35 : 0.75;
+        else if (event === 'fest') mult *= 1.5;
+        else if (event === 'holiday') mult *= 0.4;
+      }
+
+      const seed = idx * 17 + day.length * 3 + slot.length + weather.length + event.length;
+      const variance = 0.92 + seededRandom(seed) * 0.16;
+      const qty = Math.round(item.base * mult * variance);
+      return { name: item.name, base: item.base, qty };
+    }).sort((a,b) => b.qty - a.qty);
+  }
+
+  function slug(name){ return name.replace(/[^a-z0-9]/gi,'').toLowerCase(); }
+
+  function renderTicket(results, day, slot, weather, event){
+    const maxQty = Math.max(...results.map(r => r.qty));
+    const totalFootfall = Math.round(results.reduce((s,r)=>s+r.qty,0) * 0.42);
+    const slotLabel = {breakfast:'Breakfast', lunch:'Lunch', snacks:'Snacks'}[slot];
+    const weatherLabel = {sunny:'Sunny', rainy:'Rainy', cold:'Cold'}[weather];
+    const eventLabel = {none:'Normal day', exam:'Exam week', fest:'Fest / event', holiday:'Low turnout'}[event];
+
+    const rows = results.map(r => {
+      const pct = Math.round((r.qty / maxQty) * 100);
+      const isHigh = r.qty > r.base * 1.25;
+      const trend = r.qty >= r.base ? '↑' : '↓';
+      const diff = Math.abs(r.qty - r.base);
+      return `
+        <div class="item-row" id="row-${slug(r.name)}">
+          <div class="row-top">
+            <div class="checkbox">✓</div>
+            <span class="name">${r.name}</span>
+            ${isHigh ? '<span class="badge">PREP EXTRA</span>' : '<span></span>'}
+            <span class="qty">${r.qty} units</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+          <div class="row-detail"><div class="row-detail-inner">
+            <span>Usual avg: <b>${r.base}</b></span>
+            <span>Trend: <b>${trend} ${diff} units</b></span>
+            <span>Confidence: <b>${75 + Math.round(seededRandom(r.base)*15)}%</b></span>
+          </div></div>
+        </div>`;
+    }).join('');
+
+    document.getElementById('ticketArea').innerHTML = `
+      <div class="ticket">
+        <div class="ticket-head">
+          <div class="t-name">PREDICTED PREP LIST</div>
+          <div class="t-sub">${day} · ${slotLabel} · ${weatherLabel} · ${eventLabel}</div>
+        </div>
+        <div class="ticket-meta">
+          <span>MODEL: RandomForest ${customFactors ? '(your data)' : '(default)'}</span>
+          <span>GEN: ${new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</span>
+        </div>
+        <div class="ticket-hint">tap an item to check it off · tap again for prediction details</div>
+        ${rows}
+        <div class="totals">
+          <div><div class="lbl">EST. FOOTFALL</div><div class="big">${totalFootfall}</div></div>
+          <div style="text-align:right;"><div class="lbl">TOTAL UNITS</div><div class="big">${results.reduce((s,r)=>s+r.qty,0)}</div></div>
+        </div>
+      </div>
+      <div class="ticket-actions">
+        <button class="mini-btn" id="printBtn">🖨 Print ticket</button>
+        <button class="mini-btn" id="resetBtn">↺ Reset checklist</button>
+      </div>
+      <div class="perforation"></div>
+    `;
+
+    // click-to-check / click-to-expand behaviour
+    document.querySelectorAll('.item-row').forEach(row => {
+      let lastTap = 0;
+      row.addEventListener('click', (e) => {
+        if (e.target.closest('.checkbox')) {
+          row.classList.toggle('done');
+          return;
+        }
+        row.classList.toggle('expanded');
+      });
+    });
+    document.getElementById('printBtn').addEventListener('click', () => window.print());
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      document.querySelectorAll('.item-row.done').forEach(r => r.classList.remove('done'));
+    });
+
+    // analytics chart
+    const chart = results.map(r => {
+      const pct = Math.round((r.qty / maxQty) * 100);
+      return `
+        <div class="chart-row" data-target="row-${slug(r.name)}">
+          <div class="cname">${r.name}</div>
+          <div class="ctrack"><div class="cfill" style="width:${pct}%"></div></div>
+          <div class="cval">${r.qty}</div>
+        </div>`;
+    }).join('');
+    document.getElementById('chartArea').innerHTML = chart;
+    document.getElementById('analyticsCard').style.display = 'block';
+
+    document.querySelectorAll('.chart-row').forEach(row => {
+      row.addEventListener('click', () => {
+        const target = document.getElementById(row.dataset.target);
+        if (target) {
+          target.scrollIntoView({behavior:'smooth', block:'center'});
+          target.classList.add('expanded');
+          target.style.background = '#F4F6F3';
+          setTimeout(() => target.style.background = '', 900);
+        }
+      });
+    });
+
+    renderTrendChart(results, slot, weather, event);
+  }
+
+  // ---------- weekly trend chart (top 4 items across all days) ----------
+  const TREND_COLORS = ['#1F4B3F', '#E8A33D', '#C1443B', '#2F6B57'];
+  const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+  function renderTrendChart(currentResults, slot, weather, event){
+    const topItems = currentResults.slice(0, 4).map(r => r.name);
+    const series = topItems.map(name =>
+      DAYS.map(d => predictDemand(d, slot, weather, event).find(r => r.name === name).qty)
+    );
+
+    const w = 640, h = 200, padL = 34, padB = 22, padT = 10, padR = 10;
+    const maxVal = Math.max(...series.flat());
+    const x = i => padL + (i / (DAYS.length - 1)) * (w - padL - padR);
+    const y = v => (h - padB) - (v / maxVal) * (h - padT - padB);
+
+    const gridLines = [0, 0.5, 1].map(f => {
+      const yy = padT + f * (h - padT - padB);
+      return `<line x1="${padL}" y1="${yy}" x2="${w-padR}" y2="${yy}" stroke="var(--line-soft)" stroke-width="1"/>`;
+    }).join('');
+
+    const dayLabels = DAYS.map((d,i) =>
+      `<text x="${x(i)}" y="${h-4}" font-size="9.5" fill="var(--ink-soft)" font-family="IBM Plex Mono, monospace" text-anchor="middle">${d.slice(0,3)}</text>`
+    ).join('');
+
+    const paths = series.map((vals, si) => {
+      const pts = vals.map((v,i) => `${x(i)},${y(v)}`).join(' ');
+      const dots = vals.map((v,i) =>
+        `<circle class="trend-pt" cx="${x(i)}" cy="${y(v)}" r="3.5" fill="${TREND_COLORS[si]}"><title>${topItems[si]} · ${DAYS[i]} · ${v} units</title></circle>`
+      ).join('');
+      return `<polyline points="${pts}" fill="none" stroke="${TREND_COLORS[si]}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>${dots}`;
+    }).join('');
+
+    document.getElementById('trendChart').innerHTML =
+      `<svg viewBox="0 0 ${w} ${h}">${gridLines}${dayLabels}${paths}</svg>`;
+
+    document.getElementById('trendLegend').innerHTML = topItems.map((name,i) =>
+      `<span><i style="background:${TREND_COLORS[i]}"></i>${name}</span>`
+    ).join('');
+
+    document.getElementById('trendCard').style.display = 'block';
+  }
+
+  function runPrediction(){
+    const day = getDay(), slot = getSlot(), weather = getWeather(), event = getEvent();
+    renderTicket(predictDemand(day, slot, weather, event), day, slot, weather, event);
+    document.getElementById('chitNo').textContent = '#' + String(Math.floor(1000 + Math.random()*8999));
+  }
+
+  document.getElementById('predictBtn').addEventListener('click', runPrediction);
+
+  document.getElementById('shuffleBtn').addEventListener('click', () => {
+    [['dayGroup'],['slotGroup'],['weatherGroup'],['eventGroup']].forEach(([id]) => {
+      const group = document.getElementById(id);
+      const pills = [...group.querySelectorAll('.pill')];
+      const pick = pills[Math.floor(Math.random()*pills.length)];
+      pills.forEach(p => p.classList.remove('active'));
+      pick.classList.add('active');
+    });
+    runPrediction();
+  });
+
+  // ---------- canteen owner: upload their own sales data ----------
+  const csvInput   = document.getElementById('csvInput');
+  const dataMsg    = document.getElementById('dataMsg');
+  const sourceDot  = document.getElementById('sourceDot');
+  const sourceLbl  = document.getElementById('sourceLabel');
+  const resetDataBtn = document.getElementById('resetDataBtn');
+
+  document.getElementById('uploadBtn').addEventListener('click', () => csvInput.click());
+
+  document.getElementById('sampleBtn').addEventListener('click', () => {
+    const sample = [
+      'item,day,slot,weather,event,qty',
+      'Samosa,Monday,breakfast,sunny,none,92',
+      'Tea / Coffee,Monday,breakfast,sunny,none,140',
+      'Maggi,Monday,snacks,rainy,none,88',
+      'Veg Thali,Friday,lunch,sunny,fest,95',
+      'Chole Bhature,Saturday,lunch,cold,none,38',
+    ].join('\n');
+    const blob = new Blob([sample], {type:'text/csv'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'canteen_sales_sample.csv';
+    a.click();
+  });
+
+  function showMsg(text, ok){
+    dataMsg.textContent = text;
+    dataMsg.className = 'data-msg show ' + (ok ? 'ok' : 'err');
+  }
+
+  function parseCSV(text){
+    const lines = text.trim().split(/\r?\n/);
+    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+    return lines.slice(1).filter(l => l.trim()).map(line => {
+      const cells = line.split(',').map(c => c.trim());
+      const row = {};
+      headers.forEach((h,i) => row[h] = cells[i]);
+      return row;
+    });
+  }
+
+  function trainFromRows(rows){
+    const clean = rows.filter(r => r.item && r.qty && !isNaN(parseFloat(r.qty)));
+    if (clean.length < 5) throw new Error('Need at least 5 valid rows (item + qty).');
+
+    // per-item average -> new base demand
+    const byItem = {};
+    clean.forEach(r => {
+      const q = parseFloat(r.qty);
+      (byItem[r.item] = byItem[r.item] || []).push(q);
+    });
+    const menu = Object.entries(byItem).map(([name, vals]) => ({
+      name, base: Math.round(vals.reduce((a,b)=>a+b,0) / vals.length)
+    })).sort((a,b) => b.base - a.base);
+
+    // overall mean, then per-category mean / overall mean = multiplier
+    const overallMean = clean.reduce((s,r)=>s+parseFloat(r.qty),0) / clean.length;
+    function factorsFor(col){
+      const groups = {};
+      clean.forEach(r => { if (r[col]) (groups[r[col]] = groups[r[col]] || []).push(parseFloat(r.qty)); });
+      const out = {};
+      Object.entries(groups).forEach(([val, vals]) => {
+        out[val] = (vals.reduce((a,b)=>a+b,0) / vals.length) / overallMean;
+      });
+      return out;
+    }
+
+    return {
+      menu,
+      factors: {
+        day: factorsFor('day'),
+        slot: factorsFor('slot'),
+        weather: factorsFor('weather'),
+        event: factorsFor('event'),
+      },
+      rowCount: clean.length,
+      itemCount: menu.length,
+    };
+  }
+
+  csvInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const rows = parseCSV(reader.result);
+        const trained = trainFromRows(rows);
+        ACTIVE_MENU = trained.menu;
+        customFactors = trained.factors;
+        sourceDot.classList.add('custom');
+        sourceLbl.textContent = `${file.name} — ${trained.rowCount} records, ${trained.itemCount} items`;
+        resetDataBtn.style.display = 'inline-block';
+        showMsg('Retrained on your data. Predictions now use these numbers.', true);
+        if (document.querySelector('.ticket')) runPrediction();
+      } catch (err) {
+        showMsg('Could not read that file: ' + err.message, false);
+      }
+    };
+    reader.readAsText(file);
+    csvInput.value = '';
+  });
+
+  resetDataBtn.addEventListener('click', () => {
+    ACTIVE_MENU = DEFAULT_MENU;
+    customFactors = null;
+    sourceDot.classList.remove('custom');
+    sourceLbl.textContent = 'Default dataset — 8 items, synthetic';
+    resetDataBtn.style.display = 'none';
+    dataMsg.className = 'data-msg';
+    if (document.querySelector('.ticket')) runPrediction();
+  });
+</script>
+</body>
+</html>

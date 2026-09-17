@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canteen Demand Desk — GL Bajaj CSIT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ... CSS code — see style.css ... */
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <div class="brand-eyebrow">CSIT · GL Bajaj Institute</div>
+      <h1>Canteen Demand Desk</h1>
+      <div class="sub">Prototype — click your scenario, get an instant prep ticket</div>
+    </div>
+    <div class="clock">TODAY<span id="todayDate">—</span></div>
+  </header>
+
+  <!-- DATA SOURCE -->
+  <div class="card data-card">
+    <h2>Training data</h2>
+    <div class="sub">Predictions above run on the default dataset. A canteen owner can swap in their own sales history instead.</div>
+    <div class="source-row">
+      <div class="source-status">
+        <span class="dot" id="sourceDot"></span>
+        <span id="sourceLabel">Default dataset — 8 items, synthetic</span>
+      </div>
+      <div class="data-actions">
+        <button class="file-btn ghost" id="sampleBtn">⬇ Sample CSV</button>
+        <button class="file-btn" id="uploadBtn">⬆ Upload your data</button>
+        <button class="file-btn ghost" id="resetDataBtn" style="display:none;">↺ Use default</button>
+      </div>
+      <input type="file" id="csvInput" accept=".csv">
+    </div>
+    <div class="data-msg" id="dataMsg"></div>
+  </div>
+
+  <div class="grid">
+
+    <!-- FORM -->
+    <div class="card chit">
+      <div class="label-row">
+        <h2>New Prediction</h2>
+        <span class="tag-no" id="chitNo">#0001</span>
+      </div>
+
+      <div class="field">
+        <label>Day of week</label>
+        <div class="pill-group" id="dayGroup">
+          <div class="pill" data-val="Monday">Mon</div>
+          <div class="pill" data-val="Tuesday">Tue</div>
+          <div class="pill" data-val="Wednesday">Wed</div>
+          <div class="pill" data-val="Thursday">Thu</div>
+          <div class="pill active" data-val="Friday">Fri</div>
+          <div class="pill" data-val="Saturday">Sat</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Meal slot</label>
+        <div class="pill-group wide" id="slotGroup">
+          <div class="pill" data-val="breakfast"><span class="ic">🌅</span>Breakfast</div>
+          <div class="pill active" data-val="lunch"><span class="ic">🍛</span>Lunch</div>
+          <div class="pill" data-val="snacks"><span class="ic">☕</span>Snacks</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Weather</label>
+        <div class="pill-group wide" id="weatherGroup">
+          <div class="pill active" data-val="sunny"><span class="ic">☀️</span>Sunny</div>
+          <div class="pill" data-val="rainy"><span class="ic">🌧️</span>Rainy</div>
+          <div class="pill" data-val="cold"><span class="ic">❄️</span>Cold</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Special day</label>
+        <div class="pill-group" id="eventGroup">
+          <div class="pill active" data-val="none">Normal</div>
+          <div class="pill" data-val="exam">Exam week</div>
+          <div class="pill" data-val="fest">Fest</div>
+          <div class="pill" data-val="holiday">Low turnout</div>
+        </div>
+      </div>
+
+      <button class="predict-btn" id="predictBtn">▶ Predict Today's Demand</button>
+      <button class="shuffle-btn" id="shuffleBtn">🎲 Try a random scenario</button>
+
+      <div class="note">
+        Prototype logic simulates the trained <strong>RandomForestRegressor</strong> output. Swap <code>predictDemand()</code> with a fetch() call to your Flask/FastAPI endpoint to serve real predictions.
+      </div>
+    </div>
+
+    <!-- TICKET -->
+    <div class="card ticket-wrap">
+      <div id="ticketArea">
+        <div class="empty-state">
+          <div class="icon">🧾</div>
+          Click your scenario on the left, then hit<br><strong>Predict Today's Demand</strong>.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ANALYTICS -->
+  <div class="card analytics" id="analyticsCard" style="display:none;">
+    <h2>Item-wise comparison <span style="font-weight:400; color:var(--ink-soft); font-size:11.5px;">— click a bar to jump to it in the ticket</span></h2>
+    <div id="chartArea"></div>
+  </div>
+
+  <!-- WEEKLY TREND -->
+  <div class="card trend" id="trendCard" style="display:none;">
+    <h2>Weekly trend — top items</h2>
+    <div class="sub">Same slot/weather/event, predicted across all 6 days</div>
+    <div class="trend-legend" id="trendLegend"></div>
+    <div id="trendChart"></div>
+  </div>
+
+  <footer>
+    Built for <strong>College Canteen Demand Predictor</strong> · Mini Project · Model input: day, weather, event, meal slot &nbsp;·&nbsp; <code>v0.3 prototype</code>
+  </footer>
+</div>
+
+<script>
+  // ... JavaScript code — see script.js ...
+</script>
+</body>
+</html>
